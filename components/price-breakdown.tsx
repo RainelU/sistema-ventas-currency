@@ -6,6 +6,13 @@ interface PriceBreakdownProps {
   results: PriceResult[];
 }
 
+function fmt(n: number, decimals = 2): string {
+  return n.toLocaleString('es-VE', {
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
+  });
+}
+
 export function PriceBreakdown({ results }: PriceBreakdownProps) {
   if (results.length === 0) return null;
 
@@ -17,17 +24,17 @@ export function PriceBreakdown({ results }: PriceBreakdownProps) {
           {/* Header */}
           <View style={styles.header}>
             <Text style={styles.currencyName}>{result.currency.name}</Text>
-            <Text style={styles.rateLabel}>{result.currency.rate} Bs/$</Text>
+            <Text style={styles.rateLabel}>{fmt(result.currency.rate)} Bs/$</Text>
           </View>
 
           <View style={styles.divider} />
 
-          {/* Costo de compra */}
+          {/* Costo equivalente */}
           <View style={styles.row}>
             <Text style={styles.rowLabel}>Costo equivalente</Text>
             <View style={styles.rowValues}>
-              <Text style={styles.valueUSD}>${result.costEquivUSD.toFixed(2)}</Text>
-              <Text style={styles.valueVES}>{result.costVES.toFixed(2)} Bs</Text>
+              <Text style={styles.valueUSD}>${fmt(result.costEquivUSD)}</Text>
+              <Text style={styles.valueVES}>{fmt(result.costVES)} Bs</Text>
             </View>
           </View>
 
@@ -35,8 +42,8 @@ export function PriceBreakdown({ results }: PriceBreakdownProps) {
           <View style={[styles.row, styles.salePriceRow]}>
             <Text style={styles.salePriceLabel}>Precio de venta</Text>
             <View style={styles.rowValues}>
-              <Text style={styles.salePriceUSD}>${result.salePriceUSD.toFixed(2)}</Text>
-              <Text style={styles.salePriceVES}>{result.salePriceVES.toFixed(2)} Bs</Text>
+              <Text style={styles.salePriceUSD}>${fmt(result.salePriceUSD)}</Text>
+              <Text style={styles.salePriceVES}>{fmt(result.salePriceVES)} Bs</Text>
             </View>
           </View>
         </View>

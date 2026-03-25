@@ -7,14 +7,13 @@ import { useEffect } from 'react';
 import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet } from 'react-native';
 
 export default function ProductModal() {
-  const { id, name, costUSD, profitPercent, purchaseRateId, purchaseRate, imageUri } =
+  const { id, name, costUSD, profitPercent, purchaseRateId, imageUri } =
     useLocalSearchParams<{
       id?: string;
       name?: string;
       costUSD?: string;
       profitPercent?: string;
       purchaseRateId?: string;
-      purchaseRate?: string;
       imageUri?: string;
     }>();
 
@@ -32,9 +31,9 @@ export default function ProductModal() {
 
   function handleSubmit(data: Parameters<typeof addProduct>[0]) {
     if (isEditing && id) {
-      updateProduct(id, data);
+      updateProduct(id, data, currencies);
     } else {
-      addProduct(data);
+      addProduct(data, currencies);
     }
     router.back();
   }
@@ -54,7 +53,6 @@ export default function ProductModal() {
                   costUSD: costUSD ?? '',
                   profitPercent: profitPercent ?? '',
                   purchaseRateId: purchaseRateId ?? '',
-                  purchaseRate: purchaseRate ?? '',
                   imageUri: imageUri ?? undefined,
                 }
               : undefined

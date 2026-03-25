@@ -2,10 +2,11 @@ import { Currency, CurrencyFormData } from '@/types/index';
 import { loadData, saveData, STORAGE_KEYS } from '@/utils/storage';
 import React, {
   createContext,
+  useCallback,
   useContext,
   useEffect,
-  useReducer,
-  useRef,
+  useMemo,
+  useReducer
 } from 'react';
 
 // --- State & Actions ---
@@ -72,23 +73,18 @@ const CurrenciesContext = createContext<CurrenciesContextValue | null>(null);
 
 export function CurrenciesProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(currenciesReducer, initialState);
-  const isFirstRender = useRef(true);
 
-  // Load on mount
   useEffect(() => {
     loadData<Currency>(STORAGE_KEYS.CURRENCIES).then((data) => {
       dispatch({ type: 'LOAD', payload: data });
     });
   }, []);
 
-  // Persist on currencies change (skip initial load)
   useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      return;
-    }
+    // Only persist after initial load is complete (loading === false)
+    if (state.loading) return;
     saveData(STORAGE_KEYS.CURRENCIES, state.currencies);
-  }, [state.currencies]);
+  }, [state.currencies, state.loading]);
 
   const referenceCurrency: Currency | null =
     state.currencies.length === 0
@@ -101,40 +97,40 @@ export function CurrenciesProvider({ children }: { children: React.ReactNode }) 
     return Date.now().toString() + Math.random().toString(36).slice(2);
   }
 
-  function addCurrency(data: CurrencyFormData) {
+  const addCurrency = useCallback((data: CurrencyFormData) => {
     const currency: Currency = {
-      id: generateId(),
+      id: Date.now().toString() + Math.random().toString(36).slice(2),
       name: data.name,
       rate: parseFloat(data.rate.replace(',', '.')),
     };
     dispatch({ type: 'ADD', payload: currency });
-  }
+  }, []);
 
-  function updateCurrency(id: string, data: CurrencyFormData) {
+  const updateCurrency = useCallback((id: string, data: CurrencyFormData) => {
     const currency: Currency = {
       id,
       name: data.name,
       rate: parseFloat(data.rate.replace(',', '.')),
     };
     dispatch({ type: 'UPDATE', payload: currency });
-  }
+  }, []);
 
-  function deleteCurrency(id: string) {
+  const deleteCurrency = useCallback((id: string) => {
     dispatch({ type: 'DELETE', payload: id });
-  }
+  }, []);
+
+  const value = useMemo(() => ({
+    currencies: state.currencies,
+    loading: state.loading,
+    error: state.error,
+    referenceCurrency,
+    addCurrency,
+    updateCurrency,
+    deleteCurrency,
+  }), [state.currencies, state.loading, state.error, referenceCurrency, addCurrency, updateCurrency, deleteCurrency]);
 
   return (
-    <CurrenciesContext.Provider
-      value={{
-        currencies: state.currencies,
-        loading: state.loading,
-        error: state.error,
-        referenceCurrency,
-        addCurrency,
-        updateCurrency,
-        deleteCurrency,
-      }}
-    >
+    <CurrenciesContext.Provider value={value}>
       {children}
     </CurrenciesContext.Provider>
   );

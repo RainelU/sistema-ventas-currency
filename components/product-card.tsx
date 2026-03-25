@@ -1,7 +1,7 @@
 import type { Product } from '@/types/index';
 import { Image } from 'expo-image';
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 interface ProductCardProps {
   product: Product;
@@ -11,6 +11,17 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product, onPress, onEdit, onDelete }: ProductCardProps) {
+  function handleDelete(e: any) {
+    e.stopPropagation();
+    Alert.alert(
+      'Eliminar producto',
+      `¿Estás seguro de que quieres eliminar "${product.name}"?`,
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        { text: 'Eliminar', style: 'destructive', onPress: onDelete },
+      ]
+    );
+  }
   return (
     <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.8}>
       {product.imageUri ? (
@@ -31,7 +42,7 @@ export function ProductCard({ product, onPress, onEdit, onDelete }: ProductCardP
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.deleteButton}
-          onPress={(e) => { e.stopPropagation(); onDelete(); }}
+          onPress={handleDelete}
         >
           <Text style={styles.deleteText}>Eliminar</Text>
         </TouchableOpacity>

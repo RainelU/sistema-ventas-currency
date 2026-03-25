@@ -1,6 +1,6 @@
 import type { Currency } from '@/types/index';
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 interface CurrencyCardProps {
   currency: Currency;
@@ -9,7 +9,17 @@ interface CurrencyCardProps {
   onDelete: () => void;
 }
 
-export function CurrencyCard({ currency, isReference, onEdit, onDelete }: CurrencyCardProps) {
+export function CurrencyCard({ currency, onEdit, onDelete }: CurrencyCardProps) {
+  function handleDelete() {
+    Alert.alert(
+      'Eliminar moneda',
+      `¿Estás seguro de que quieres eliminar "${currency.name}"?`,
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        { text: 'Eliminar', style: 'destructive', onPress: onDelete },
+      ]
+    );
+  }
   return (
     <View style={styles.card}>
       <View style={styles.info}>
@@ -22,7 +32,7 @@ export function CurrencyCard({ currency, isReference, onEdit, onDelete }: Curren
         <TouchableOpacity style={styles.editButton} onPress={onEdit}>
           <Text style={styles.editText}>Editar</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.deleteButton} onPress={onDelete}>
+        <TouchableOpacity style={styles.deleteButton} onPress={handleDelete}>
           <Text style={styles.deleteText}>Eliminar</Text>
         </TouchableOpacity>
       </View>

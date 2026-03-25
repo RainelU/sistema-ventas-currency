@@ -4,23 +4,37 @@ import React from 'react';
 import { HapticTab } from '@/components/haptic-tab';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Colors } from '@/constants/theme';
+import { useSettings } from '@/context/settings-context';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
+  const systemScheme = useColorScheme();
+  const { themeMode } = useSettings();
+
+  // Resolve effective scheme: settings override > system > default light
+  const effectiveScheme =
+    themeMode === 'system'
+      ? (systemScheme ?? 'light')
+      : themeMode;
+
+  const activeTint = Colors[effectiveScheme].tint;
+  const inactiveTint = Colors[effectiveScheme].tabIconDefault;
+  const tabBarBg = effectiveScheme === 'dark' ? '#151718' : '#fff';
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        tabBarActiveTintColor: activeTint,
+        tabBarInactiveTintColor: inactiveTint,
+        tabBarStyle: { backgroundColor: tabBarBg },
         headerShown: false,
         tabBarButton: HapticTab,
       }}>
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Inicio',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+          title: 'Productos',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="shippingbox.fill" color={color} />,
         }}
       />
       <Tabs.Screen

@@ -30,7 +30,6 @@ export interface ProductFormData {
   costUSD: string;
   profitPercent: string;
   purchaseRateId: string;  // id de la moneda de compra
-  purchaseRate: string;    // tasa de compra (Bs/$) en el momento de la compra
   imageUri?: string;
 }
 
@@ -44,7 +43,6 @@ export interface ProductValidationErrors {
   costUSD?: string;
   profitPercent?: string;
   purchaseRateId?: string;
-  purchaseRate?: string;
 }
 
 export interface CurrencyValidationErrors {

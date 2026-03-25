@@ -18,17 +18,12 @@ export function validateProduct(data: ProductFormData): ProductValidationErrors 
   }
 
   const profit = parseFloat(normalizeDecimal(data.profitPercent));
-  if (data.profitPercent === '' || isNaN(profit) || profit < 0 || profit > 1000) {
-    errors.profitPercent = 'El porcentaje de ganancia debe ser un número entre 0 y 1000.';
+  if (data.profitPercent === '' || isNaN(profit) || profit < 0 || profit >= 100) {
+    errors.profitPercent = 'El margen debe ser un número entre 0 y 99.99%.';
   }
 
   if (!data.purchaseRateId || data.purchaseRateId.trim() === '') {
     errors.purchaseRateId = 'Selecciona la moneda con la que compraste.';
-  }
-
-  const rate = parseFloat(normalizeDecimal(data.purchaseRate));
-  if (data.purchaseRate === '' || isNaN(rate) || rate <= 0) {
-    errors.purchaseRate = 'La tasa de compra debe ser un número mayor a 0.';
   }
 
   return errors;
