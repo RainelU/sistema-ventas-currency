@@ -11,11 +11,8 @@ export default function TabLayout() {
   const systemScheme = useColorScheme();
   const { themeMode } = useSettings();
 
-  // Resolve effective scheme: settings override > system > default light
   const effectiveScheme =
-    themeMode === 'system'
-      ? (systemScheme ?? 'light')
-      : themeMode;
+    themeMode === 'system' ? (systemScheme ?? 'light') : themeMode;
 
   const activeTint = Colors[effectiveScheme].tint;
   const inactiveTint = Colors[effectiveScheme].tabIconDefault;
